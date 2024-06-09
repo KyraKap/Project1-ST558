@@ -20,11 +20,17 @@ EDU01a_select <- select(EDU01a,"Area_name", starts_with("STC"), ends_with("D"))
 EDU01a_select
 
 #2 - Convert to long data
-EDU01a_select |>
-  pivot_longer(cols = 3:12,
+EDU01a_long <-
+  pivot_longer(EDU01a_select, cols = 3:12,
                names_to = "Enrollment",
                values_to = "values")
 
+#3
+EDU01a_long |>
+  separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
+  mutate(EDU01a_long, Measurement = substr(Enrollment, 1, 7))
+
+#4
 
 
 ```
