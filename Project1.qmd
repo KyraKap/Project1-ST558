@@ -5,4 +5,27 @@ format: html
 editor: visual
 ---
 
+## Data Processing
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+
+EDU01a <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
+EDU01a
+
+#1 - Select following columns
+EDU01a_select <- select(EDU01a,"Area_name", starts_with("STC"), ends_with("D"))
+EDU01a_select
+
+#2 - Convert to long data
+EDU01a_select |>
+  pivot_longer(cols = 3:12,
+               names_to = "Enrollment",
+               values_to = "values")
+
+
+
+```
 
