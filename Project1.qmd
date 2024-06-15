@@ -30,13 +30,7 @@ EDU01a_long |>
   separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
   mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 
-
 #4
-countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
-
-EDU01a_county <- EDU01a_long[countystuff, ]
-
-EDU01a_state <- EDU01a_long[-countystuff, ]
 
 countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
 
@@ -129,5 +123,29 @@ EDU01a_state_class_division <- EDU01a_state_class |>
 print(EDU01a_state_class_division)
 
 
+#Following steps for second dataset
 
+#function for steps 1 and 2
+
+my_wrapper <- function(url, default_var_name = "default of some kind") {
+  select_columns_from_url <- function(url) {
+    data <- read_csv(url)
+  
+    selected_data <- data |>
+        select(Area_name, starts_with("STC"), ends_with("D"))
+    return(selected_data)
+}
+
+  
+
+}
+
+
+
+
+my_wrapper <- function(url, default_var_name = "default of some kind") {
+  result <- read_csv_code(url) |>
+    function_for_step_1_2()
+    
+}
 ```
