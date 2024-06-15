@@ -39,7 +39,7 @@ EDU01a_county <- EDU01a_long[countystuff, ]
 EDU01a_state <- EDU01a_long[-countystuff, ]
 
 
-
+EDU01a_long
   
   
 
