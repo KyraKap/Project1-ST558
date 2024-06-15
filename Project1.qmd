@@ -28,10 +28,19 @@ EDU01a_long <-
 #3
 EDU01a_long |>
   separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
-  mutate(EDU01a_long, Measurement = substr(Enrollment, 1, 7))
+  mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 
 #4
 
+countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
+
+EDU01a_county <- EDU01a_long[countystuff, ]
+
+EDU01a_state <- EDU01a_long[-countystuff, ]
+
+
+
+  
+  
 
 ```
-
