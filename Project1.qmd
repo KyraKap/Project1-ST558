@@ -28,14 +28,9 @@ EDU01a_long <-
 #3
 EDU01a_long |>
   separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
-<<<<<<< HEAD
-  mutate(EDU01a_long, Measurement = substr(Enrollment, 1, 7))
-```
-=======
   mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
->>>>>>> 12d6de870c20935c249e1b7a6b6692e6dd484194
 
-```{r}
+
 #4
 countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
 
