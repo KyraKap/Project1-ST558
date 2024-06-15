@@ -31,7 +31,6 @@ EDU01a_long |>
   mutate(EDU01a_long, Measurement = substr(Enrollment, 1, 7))
 ```
 
-
 ```{r}
 #4
 countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
