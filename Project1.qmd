@@ -28,8 +28,12 @@ EDU01a_long <-
 #3
 EDU01a_long |>
   separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
+<<<<<<< HEAD
   mutate(EDU01a_long, Measurement = substr(Enrollment, 1, 7))
 ```
+=======
+  mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
+>>>>>>> 12d6de870c20935c249e1b7a6b6692e6dd484194
 
 ```{r}
 #4
@@ -38,6 +42,97 @@ countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
 EDU01a_county <- EDU01a_long[countystuff, ]
 
 EDU01a_state <- EDU01a_long[-countystuff, ]
+
+countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
+
+EDU01a_county <- EDU01a_long[countystuff, ]
+
+EDU01a_state <- EDU01a_long[-countystuff, ]
+
+
+class(EDU01a_county) <- c("county", class(EDU01a_county))
+
+EDU01a_county_class <- EDU01a_county |>
+  mutate(class_type = class(EDU01a_county)[1])
+
+class(EDU01a_state) <- c("state", class(EDU01a_state))
+
+EDU01a_state_class <- EDU01a_state |>
+  mutate(class_type = class(EDU01a_state)[1])
+
+
+#5
+print(EDU01a_county_class)
+print(EDU01a_state_class)
+
+EDU01a_county_class_abb <- EDU01a_county_class |>
+  mutate(abbrev_state = substr(Area_name, nchar(Area_name)-1, nchar(Area_name)))
+
+print(EDU01a_county_class_abb)
+
+#6
+
+state_division <- c("CONNECTICUT" = "New England", 
+                    "MAINE" = "New England",
+                    "MASSACHUSETTS" = "New England",
+                    "NEW HAMPSHIRE" = "New England",
+                    "RHODE ISLAND" = "New England",
+                    "VERMONT" = "New England",
+                    "NEW JERSEY" = "Middle Atlantic",
+                    "NEW YORK" = "Middle Atlantic",
+                    "PENNSYLVANIA" = "Middle Atlantic",
+                    "ILLINOIS" = "East North Central",
+                    "INDIANA" = "East North Central",
+                    "MICHIGAN" = "East North Central",
+                    "OHIO" = "East North Central",
+                    "WISCONSIN" = "East North Central",
+                    "IOWA" = "West North Central",
+                    "KANSAS" = "West North Central",
+                    "MINNESOTA" = "West North Central",
+                    "MISSOURI" = "West North Central",
+                    "NEBRASKA" = "West North Central",
+                    "NORTH DAKOTA" = "West North Central",
+                    "SOUTH DAKOTA" = "West North Central",
+                    "DELAWARE" = "South Atlantic",
+                    "FLORIDA" = "South Atlantic",
+                    "GEORGIA" = "South Atlantic",
+                    "MARYLAND" = "South Atlantic",
+                    "NORTH CAROLINA" = "South Atlantic",
+                    "SOUTH CAROLINA" = "South Atlantic",
+                    "VIRGINIA" = "South Atlantic",
+                    "District of Columbia" = "South Atlantic",
+                    "DISTRICT OF COLUMBIA" = "South Atlantic",
+                    "WEST VIRGINIA" = "South Atlantic",
+                    "ALABAMA" = "East South Central",
+                    "KENTUCKY" = "East South Central",
+                    "MISSISSIPPI" = "East South Central",
+                    "TENNESSEE" = "East South Central",
+                    "ARKANSAS" = "West South Central",
+                    "LOUISIANA" = "West South Central",
+                    "OKLAHOMA" = "West South Central",
+                    "TEXAS" = "West South Central",
+                    "ARIZONA" = "Mountain",
+                    "COLORADO" = "Mountain",
+                    "IDAHO" = "Mountain",
+                    "MONTANA" = "Mountain",
+                    "NEVADA" = "Mountain",
+                    "NEW MEXICO" = "Mountain",
+                    "UTAH" = "Mountain",
+                    "WYOMING" = "Mountain",
+                    "ALASKA" = "Pacific",
+                    "CALIFORNIA" = "Pacific",
+                    "HAWAII" = "Pacific",
+                    "OREGON" = "Pacific",
+                    "WASHINGTON" = "Pacific")
+
+
+EDU01a_state_class_division <- EDU01a_state_class |>
+  mutate(division = ifelse(Area_name %in% names(state_division),
+                           state_division[Area_name],
+                           "Error"))  
+
+print(EDU01a_state_class_division)
+
 
 
 ```
