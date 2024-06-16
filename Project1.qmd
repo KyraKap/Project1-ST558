@@ -8,11 +8,8 @@ editor: visual
 ## Data Processing
 
 ### First steps
-
 For the first part of our project, we are looking at some survey data about school enrollment.
-
 First, we need to load our necessary packages
-
 ```{r}
 library(tidyr)
 library(dplyr)
