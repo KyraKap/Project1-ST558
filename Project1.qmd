@@ -22,7 +22,6 @@ library(readr)
 
 For our first data file, we will only be looking at some of the columns. Initially, we want to read the data in and call it, to make sure we've done this successfully.
 
-
 ```{r}
 EDU01a <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
 EDU01a
@@ -34,14 +33,18 @@ The data looks good! So now we will select only the columns that we'd like to lo
 
 ```{r}
 #1 - Select following columns
-EDU01a_select <- select(EDU01a,"Area_name", starts_with("STC"), ends_with("D"))
+EDU01a_select <- EDU01a |>
+  select("Area_name", starts_with("STC"), ends_with("D")) |>
+  rename(area_name = "Area_name")
+
 EDU01a_select
+
+
 ```
 
 We know that in this data, the column that ends with a D indicates an enrollment value for that year (with the year being the two digits before the 'D'). Going down, we see all of the enrollment values from that year, in all of the different cities. In order to make this data easier for us to read and understand, we can convert it to long format and rename the columns. What this will do, is turn the columns with this awkward long name ending with D, to simply read '`Enrollment`'. Then all of the years will be listed going down and the corresponding values will appear alongside them. This also means that there will be more than one row/observation for each city. Instead of looking all the way across the row for each city and scanning for the correct year column, we will now have individual rows/observations for city, a year, and the corresponding enrollment value. This will make things easier to process.
 
 In order to do this conversion, we are going to simply use the `pivot_longer()` function, and its built-in arguments to achieve our goal. `Names_to` helps us give a new name to the new column **containing** the **NAMES OF THE COLUMNS** we have specified. This makes sense when you think about it because these used to be names of the columns and now they need a new name, as they have been rotated and will be located where the data is. `Values_to` helps us set a new name for the data **values** that will remain values but will just be slightly shifted to correspond to the brand new `Enrollment` column we've made.
-
 
 ```{r}
 # using the help documentation is such a convenient way to remember what the arguments are asking for
@@ -49,7 +52,6 @@ help(pivot_longer)
 ```
 
 Let's give it a whirl! And we are also creating a new object at the same time called `EDU01a_long`.
-
 
 ```{r}
 #2 - Convert to long data
@@ -64,7 +66,7 @@ Scrolling through, the data looks how we want it to for now.
 
 The next step is to make further sense of this long Enrollment string. Two digits of the year are in there so we want to pull that out and make it look better by adding the other digits of the year.
 
-The enrollment variable contains strings that are 10 digits long. 
+The enrollment variable contains strings that are 10 digits long.
 
 ```{r}
 #Pranav, I'm going to comment this out and mess with it a little bit, because I'm finding this a bit confusing but want to preserve what we had originally...
@@ -95,7 +97,7 @@ EDU01a_new
 
 #4
 
-countystuff <- grep(pattern = ", \\w\\w", EDU01a_new$Area_name)
+countystuff <- grep(pattern = ", \\w\\w", EDU01a_new$area_name)
 
 EDU01a_county <- EDU01a_new[countystuff, ]
 
@@ -321,6 +323,7 @@ print(non_county_data)
 
 
 ```
+
 Write a generic function for Summarizing
 
 ```{r}
@@ -330,7 +333,6 @@ plot.state <- function(data(), value_col_name = "enrollment") {
   
   data_summary <- filter_data |>
     group_by(year, division) |>
-    summarize(mean_val = mean())
+    summarize(mean_val = mean(year, division))
 }
 ```
-
