@@ -169,15 +169,68 @@ print(EDU01a_state_class_division)
     
     county_data <- step_5(county_data)
     
-    non_county_data <- 
-              
+    non_county_data <- step_6(non_county_data)
     
+    list(county_data = county_data, non_county_data = non_county_data)
+              
+  }
 
-
-
-my_wrapper <- function(url, default_var_name = "default of some kind") {
-  result <- read_csv_code(url) |>
-    function_for_step_1_2()
+my_wrapper <- function(url, value_col_name = "enrollment") {
+  data <- read_csv(url)
+  state_division <- c("CONNECTICUT" = "New England", 
+                      "MAINE" = "New England",
+                      "MASSACHUSETTS" = "New England",
+                      "NEW HAMPSHIRE" = "New England",
+                      "RHODE ISLAND" = "New England",
+                      "VERMONT" = "New England",
+                      "NEW JERSEY" = "Middle Atlantic",
+                      "NEW YORK" = "Middle Atlantic",
+                      "PENNSYLVANIA" = "Middle Atlantic",
+                      "ILLINOIS" = "East North Central",
+                      "INDIANA" = "East North Central",
+                      "MICHIGAN" = "East North Central",
+                      "OHIO" = "East North Central",
+                      "WISCONSIN" = "East North Central",
+                      "IOWA" = "West North Central",
+                      "KANSAS" = "West North Central",
+                      "MINNESOTA" = "West North Central",
+                      "MISSOURI" = "West North Central",
+                      "NEBRASKA" = "West North Central",
+                      "NORTH DAKOTA" = "West North Central",
+                      "SOUTH DAKOTA" = "West North Central",
+                      "DELAWARE" = "South Atlantic",
+                      "FLORIDA" = "South Atlantic",
+                      "GEORGIA" = "South Atlantic",
+                      "MARYLAND" = "South Atlantic",
+                      "NORTH CAROLINA" = "South Atlantic",
+                      "SOUTH CAROLINA" = "South Atlantic",
+                      "VIRGINIA" = "South Atlantic",
+                      "District of Columbia" = "South Atlantic",
+                      "DISTRICT OF COLUMBIA" = "South Atlantic",
+                      "WEST VIRGINIA" = "South Atlantic",
+                      "ALABAMA" = "East South Central",
+                      "KENTUCKY" = "East South Central",
+                      "MISSISSIPPI" = "East South Central",
+                      "TENNESSEE" = "East South Central",
+                      "ARKANSAS" = "West South Central",
+                      "LOUISIANA" = "West South Central",
+                      "OKLAHOMA" = "West South Central",
+                      "TEXAS" = "West South Central",
+                      "ARIZONA" = "Mountain",
+                      "COLORADO" = "Mountain",
+                      "IDAHO" = "Mountain",
+                      "MONTANA" = "Mountain",
+                      "NEVADA" = "Mountain",
+                      "NEW MEXICO" = "Mountain",
+                      "UTAH" = "Mountain",
+                      "WYOMING" = "Mountain",
+                      "ALASKA" = "Pacific",
+                      "CALIFORNIA" = "Pacific",
+                      "HAWAII" = "Pacific",
+                      "OREGON" = "Pacific",
+                      "WASHINGTON" = "Pacific")
+    
+    
     
 }
 ```
