@@ -208,7 +208,7 @@ print(EDU01a_state_class_division)
   
   step_3 <- function(data) {
     data |>
-      mutate(data3, year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
+      mutate(data, year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
       )
   }
   
