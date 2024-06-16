@@ -69,10 +69,6 @@ The enrollment variable contains strings that are 10 digits long.
 ```{r}
 #Pranav, I'm going to comment this out and mess with it a little bit, because I'm finding this a bit confusing but want to preserve what we had originally...
 
-#3
-#EDU01a_long |>
-  #separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
-  #mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 ```
 
 FOR REFERENCE: Instructions for number 3.
@@ -89,27 +85,21 @@ EDU01a_new <- EDU01a_long |>
        Year = IncompleteYear + 1900) |>
       select(-Enrollment, -IncompleteYear)
 
-
 EDU01a_new
 
 ```
 
 ```{r}
-# commenting this out because I have some updated code for this above
 
-#3
-#EDU01a_long |>
-  #separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
-  #mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 
 
 #4
 
-countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
+countystuff <- grep(pattern = ", \\w\\w", EDU01a_new$Area_name)
 
-EDU01a_county <- EDU01a_long[countystuff, ]
+EDU01a_county <- EDU01a_new[countystuff, ]
 
-EDU01a_state <- EDU01a_long[-countystuff, ]
+EDU01a_state <- EDU01a_new[-countystuff, ]
 
 
 class(EDU01a_county) <- c("county", class(EDU01a_county))
