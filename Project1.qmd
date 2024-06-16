@@ -135,18 +135,18 @@ print(EDU01a_state_class_division)
   }
   
   step_3 <- function(data) {
-    data4 <- data3 |>
+    data3 |>
       mutate(data3, year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
       )
   }
   
   step_5 <- function(data) {
-    data4 |>
+    data3 |>
       mutate(state = ifelse(grepl(pattern = ", \\w\\w", Area_name), substr(Area_name, nchar(Area_name) - 1, nchar(Area_name)), NA))
   }
   
   step_6 <- function(data, state_division){
-    data4 |> 
+    data3 |> 
       mutate(division = ifelse(Area_name %in% names(state_division),
                         state_division[Area_name],
                         "Error"))  
@@ -229,8 +229,13 @@ my_wrapper <- function(url, value_col_name = "enrollment") {
                       "HAWAII" = "Pacific",
                       "OREGON" = "Pacific",
                       "WASHINGTON" = "Pacific")
-    
-    
-    
+  
+  result <- process_data(data, state_division)
+  
+  result
 }
+
+url <- "https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv"
+
+result <- my_wrapper(url)
 ```
