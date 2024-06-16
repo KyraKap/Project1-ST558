@@ -81,6 +81,16 @@ I think we are trying to create a column called Measurement that has the Area_na
 help(substr)
 ```
 
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
 #4
 
 countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
