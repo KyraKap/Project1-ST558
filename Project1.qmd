@@ -322,17 +322,26 @@ print(non_county_data)
 
 
 
+
+
 ```
 
 Write a generic function for Summarizing
 
 ```{r}
-plot.state <- function(data(), value_col_name = "enrollment") {
+library(ggplot2)
+plot_state <- function(data, var_name = "enrollment") {
   filter_data <- data |>
     filter(division != "ERROR")
   
   data_summary <- filter_data |>
     group_by(year, division) |>
-    summarize(mean_val = mean(year, division))
+    summarize(mean_val = mean(get(var_name)))
+  
+  plot <- ggplot(data_summary, aes(x = year, y = mean_val, color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
+  
+  return(plot)
+    
 }
+plot_state(non_county_data)
 ```
