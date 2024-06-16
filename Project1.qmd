@@ -232,6 +232,7 @@ print(EDU01a_state_class_division)
     
     list(county_data = county_data, non_county_data = non_county_data)
   }
+  
   process_data <- function(data, state_division) {
     long_data <- step_1_2(data)
     
