@@ -55,18 +55,11 @@ EDU01a_long <-
                values_to = "values")
 ```
 
-Scrolling through, the data looks how we want it to for now. 
+Scrolling through, the data looks how we want it to for now.
 
-The next step is to make further sense of this long Enrollment string. Two digits of the year are in there so we want to pull that out and make it look better by adding the other digits of the year. 
+The next step is to make further sense of this long Enrollment string. Two digits of the year are in there so we want to pull that out and make it look better by adding the other digits of the year.
 
-```{r}
-help(separate_wider_position)
-```
-The enrollment variable contains strings that are 10 digits long. The separate_wider_position() function will help us split up this string and the 7, 2, and 1 numbers are showing where to split things up (first 7 digits are a separate string, next two digits are another string called Year, and then the last digit will be a separate value).
-
-The next line of code creates a new column called Measurement, that has the same values as the Area_name column. 
-
-I think we are trying to create a column called Measurement that has the Area_name values, and the first 7 digits of Enrollment??
+The enrollment variable contains strings that are 10 digits long. 
 
 ```{r}
 #Pranav, I'm going to comment this out and mess with it a little bit, because I'm finding this a bit confusing but want to preserve what we had originally...
@@ -77,17 +70,24 @@ I think we are trying to create a column called Measurement that has the Area_na
   #mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 ```
 
-```{r}
-help(substr)
-```
+FOR REFERENCE: Instructions for number 3.
 
-
+Parse the string to pull out the year and convert the year into a numeric value such as 1997 or 2002. Grab the first three characters and following four digits to create a new variable representing which measurement was grabbed. – Hint: Check out the substr() function from base R
 
 ```{r}
+#3 Corrected version
+
+EDU01a_new <- EDU01a_long |>
+      mutate(
+       IncompleteYear = as.numeric(substr(Enrollment, 8, 9)),
+       Measurement = substr(Enrollment, 1, 7), 
+       Year = IncompleteYear + 1900) |>
+      select(-Enrollment, -IncompleteYear)
+
+
+EDU01a_new
 
 ```
-
-
 
 ```{r}
 
