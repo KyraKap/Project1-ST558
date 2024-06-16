@@ -7,89 +7,28 @@ editor: visual
 
 ## Data Processing
 
-### First steps
-
-For the first part of our project, we are looking at some survey data about school enrollment.
-
-First, we need to load our necessary packages
-
 ```{r}
 library(tidyr)
 library(dplyr)
 library(tidyverse)
-```
 
-For our first data file, we will only be looking at some of the columns. Initially, we want to read the data in and call it, to make sure we've done this successfully.
-
-```{r}
 EDU01a <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
 EDU01a
-```
 
-The data looks good! So now we will select only the columns that we'd like to look at. Using the `select()` function, we can name our data frame, the columns that we want, and we can even use `starts_with` and `ends_with` to help us choose exactly what we want with a little more specificity and ease. We are creating a new object in the process so that we can do further manipulations on just these columns. We're calling the new object `EDU01a_select`.
-
-## Pranav, I think we need to change "Area_name" to "area_name" per the instructions in the project doc.Not sure how important this is or why it was listed.
-
-```{r}
 #1 - Select following columns
 EDU01a_select <- select(EDU01a,"Area_name", starts_with("STC"), ends_with("D"))
 EDU01a_select
-```
 
-We know that in this data, the column that ends with a D indicates an enrollment value for that year (with the year being the two digits before the 'D'). Going down, we see all of the enrollment values from that year, in all of the different cities. In order to make this data easier for us to read and understand, we can convert it to long format and rename the columns. What this will do, is turn the columns with this awkward long name ending with D, to simply read '`Enrollment`'. Then all of the years will be listed going down and the corresponding values will appear alongside them. This also means that there will be more than one row/observation for each city. Instead of looking all the way across the row for each city and scanning for the correct year column, we will now have individual rows/observations for city, a year, and the corresponding enrollment value. This will make things easier to process.
-
-In order to do this conversion, we are going to simply use the `pivot_longer()` function, and its built-in arguments to achieve our goal. `Names_to` helps us give a new name to the new column **containing** the **NAMES OF THE COLUMNS** we have specified. This makes sense when you think about it because these used to be names of the columns and now they need a new name, as they have been rotated and will be located where the data is. `Values_to` helps us set a new name for the data **values** that will remain values but will just be slightly shifted to correspond to the brand new `Enrollment` column we've made.
-
-```{r}
-# using the help documentation is such a convenient way to remember what the arguments are asking for
-help(pivot_longer)
-```
-
-Let's give it a whirl! And we are also creating a new object at the same time called `EDU01a_long`.
-
-```{r}
 #2 - Convert to long data
 EDU01a_long <-
   pivot_longer(EDU01a_select, cols = 3:12,
                names_to = "Enrollment",
                values_to = "values")
-```
-
-Scrolling through, the data looks how we want it to for now. 
-
-The next step is to make further sense of this long Enrollment string. Two digits of the year are in there so we want to pull that out and make it look better by adding the other digits of the year. 
-
-```{r}
-help(separate_wider_position)
-```
-The enrollment variable contains strings that are 10 digits long. The separate_wider_position() function will help us split up this string and the 7, 2, and 1 numbers are showing where to split things up (first 7 digits are a separate string, next two digits are another string called Year, and then the last digit will be a separate value).
-
-The next line of code creates a new column called Measurement, that has the same values as the Area_name column. 
-
-I think we are trying to create a column called Measurement that has the Area_name values, and the first 7 digits of Enrollment??
-
-```{r}
-#Pranav, I'm going to comment this out and mess with it a little bit, because I'm finding this a bit confusing but want to preserve what we had originally...
 
 #3
-#EDU01a_long |>
-  #separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
-  #mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
-```
-
-```{r}
-help(substr)
-```
-
-
-
-```{r}
-
-```
-
-
-
-```{r}
+EDU01a_long |>
+  separate_wider_position(Enrollment, c(7, Year = 2, 1)) |>
+  mutate(EDU01a_long, Measurement = Area_name, substr(Enrollment, 1, 7))
 
 #4
 
@@ -98,7 +37,6 @@ countystuff <- grep(pattern = ", \\w\\w", EDU01a_long$Area_name)
 EDU01a_county <- EDU01a_long[countystuff, ]
 
 EDU01a_state <- EDU01a_long[-countystuff, ]
-
 
 
 class(EDU01a_county) <- c("county", class(EDU01a_county))
@@ -189,19 +127,51 @@ print(EDU01a_state_class_division)
 
 #function for steps 1 and 2
 
-my_wrapper <- function(url, default_var_name = "default of some kind") {
-  select_columns_from_url <- function(url) {
-    data <- read_csv(url)
+
+  step_1_2 <- function(data, value_col_name = "enrollment") {
+    data3 <- data |>
+      select(Area_name, starts_with("STC"), ends_with("D"))
+      pivot_longer(data, cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
+  }
   
-    selected_data <- data |>
-        select(Area_name, starts_with("STC"), ends_with("D"))
-    return(selected_data)
-}
-
+  step_3 <- function(data) {
+    data4 <- data3 |>
+      mutate(data3, year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
+      )
+  }
   
+  step_5 <- function(data) {
+    data4 |>
+      mutate(state = ifelse(grepl(pattern = ", \\w\\w", Area_name), substr(Area_name, nchar(Area_name) - 1, nchar(Area_name)), NA))
+  }
+  
+  step_6 <- function(data, state_division){
+    data4 |> 
+      mutate(division = ifelse(Area_name %in% names(state_division),
+                        state_division[Area_name],
+                        "Error"))  
 
-}
-
+  }
+  
+  process_data <- function(data, state_division) {
+    long_data <- step_1_2(data)
+    
+    parsed_data <- step_3(long_data)
+    
+    county_data <- parsed_data |>
+      filter(grep(pattern = ", \\w\\w", Area_name))
+    
+    non_county_data <- parsed_data |>
+      filter(!grep(pattern = ", \\w\\w", Area_name))
+    
+    class(county_data) <- c("county", class(county_data))
+    class(non_county_data) <- c("state", class(non_county_data))
+    
+    county_data <- step_5(county_data)
+    
+    non_county_data <- 
+              
+    
 
 
 
