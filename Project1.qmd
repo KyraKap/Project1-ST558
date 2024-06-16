@@ -204,19 +204,19 @@ print(EDU01a_state_class_division)
     data |>
       select(Area_name, starts_with("STC"), ends_with("D")) |>
       rename(area_name = Area_name) |>
-      pivot_longer(data, cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
+      pivot_longer(cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
      
   }
   
   step_3 <- function(data) {
     data |>
-      mutate(data, year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
+      mutate(year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year))), measurement = substr(measurement_year, 1, nchar(measurement_year) - 3)
       )
   }
   
   step_5 <- function(data) {
     data |>
-      mutate(state = ifelse(grepl(pattern = ", \\w\\w", area_name), substr(area_name, nchar(Area_name) - 1, nchar(area_name)), NA))
+      mutate(state = ifelse(grep(pattern = ", \\w\\w", area_name), substr(area_name, nchar(Area_name) - 1, nchar(area_name)), NA))
   }
   
   step_6 <- function(data, state_division){
