@@ -329,4 +329,18 @@ print(county_data)
 print(non_county_data)
 
 
+
 ```
+Write a generic function for Summarizing
+
+```{r}
+plot.state <- function(data(), value_col_name = "enrollment") {
+  filter_data <- data |>
+    filter(division != "ERROR")
+  
+  data_summary <- filter_data |>
+    group_by(year, division) |>
+    summarize(mean_val = mean())
+}
+```
+
