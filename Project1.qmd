@@ -357,9 +357,22 @@ plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_
     arrange(if(top_bottom_county == "top") desc(mean_value) 
             else mean_value)
   
-    plot <- ggplot(data_summary, aes(x = year, y = mean_val, color = division)) + geom_line() + labs(x = "Year", y = var_name, title = "Line Plot")
   
+    areas_select <- mean_value |>
+      head(num_of_county) |>
+      pull(area_name)
     
+    
+  
+    plot_data <- data_state |>
+      filter(area_name %in% areas_select)
+    
+    
+    plot <- ggplot(plot_data, aes(x = year, y = mean_value, color = area_name)) + geom_line() + labs(x = "Year", y = var_name, title = "Line Plot")
+  
+    return(plot)  
 }
   
+
+
 ```
