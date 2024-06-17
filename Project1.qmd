@@ -345,4 +345,21 @@ plot_state <- function(data, var_name = "enrollment") {
     
 }
 plot_state(non_county_data)
+
+
+plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_county = "top", num_of_county = 5) {
+  data_state <- data |>
+    filter(subset(area_name, nchar(area_name)-1, nchar(area_name)) == state)
+  
+  mean_value <- data_state |>
+    group_by(area_name) |>
+    summarize(mean_value = mean(get(var_name), na.rm = TRUE)) |>
+    arrange(if(top_bottom_county == "top") desc(mean_value) 
+            else mean_value)
+  
+    plot <- ggplot(data_summary, aes(x = year, y = mean_val, color = division)) + geom_line() + labs(x = "Year", y = var_name, title = "Line Plot")
+  
+    
+}
+  
 ```
