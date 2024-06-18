@@ -527,14 +527,14 @@ plot_state <- function(data, var_name = "enrollment") {
   
   data_summary <- filter_data |>
     group_by(Year, division) |>
-    summarize(mean_value = mean(get(var_name)))
+    summarize(mean_value = mean(get(var_name), na.rm = TRUE))
   
-  plot <- ggplot(data_summary, aes(x = Year, y = get(var_name), color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
+  plot <- ggplot(data_summary, aes(x = Year, y = mean_value, color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
   
   return(plot)
     
 }
-plot_state(wrapper_result$non_county_data, var_name = "enrollment")
+plot_state(wrapper_result$non_county_data)
 
 
 # GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
