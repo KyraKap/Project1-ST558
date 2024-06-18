@@ -312,12 +312,15 @@ print(EDU01a_state_class_division)
 
 
   step_1_2 <- function(data, value_col_name = "enrollment") {
-    data |>
+    long_data <- data |>
       select(Area_name, starts_with("STC"), ends_with("D")) |>
       rename(area_name = Area_name) |>
       pivot_longer(cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
      
   }
+
+step1result <- step_1_2(EDU01a)
+print(step1result)
 ```
 
 ------------------------------------------------------------------------
@@ -325,14 +328,25 @@ print(EDU01a_state_class_division)
 ### Function for step 3
 
 ```{r}
-step_3 <- function(data) {
-    data |>
-      mutate(
-        year = as.numeric(substr(measurement_year, nchar(measurement_year) - 3, nchar(measurement_year) - 2)), 
-        measurement = substr(measurement_year, 1, nchar(measurement_year) - 4)
-      )
-  }
+# step_3 <- function(data) {
+#     data |>
+#       mutate(
+#         year = as.numeric(substr(measurement_year, nchar(measurement_year) - 2, nchar(measurement_year) - 1)), 
+#         measurement = substr(measurement_year, 1, nchar(measurement_year) - 4))
+# }
 
+step_3 <- function(data) {
+  data |>
+        mutate(
+       IncompleteYear = as.numeric(substr(measurement_year, 8, 9)),
+       Measurement = substr(enrollment, 1, 7), 
+       Year = IncompleteYear + 1900) |>
+      select(-enrollment, -IncompleteYear)
+}
+
+step3result <- step_3(step1result)
+
+print(step3result)
 ```
 
 ------------------------------------------------------------------------
@@ -384,7 +398,7 @@ process_data <- function(data, state_division) {
     long_data <- step_1_2(data)
     
     parsed_data <- step_3(long_data)
-    
+      
     datasets <- create_two_datasets(parsed_data)
     county_data <- datasets$county_data
     non_county_data <- datasets$non_county_data
@@ -534,7 +548,7 @@ plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_
             else mean_value)
   
  # GABBY COMMENT: THIS IS WHY PLOT ISNT WORKING
-  #we want to use mean_value with a dollar sign to extrapolate the area_name from the variable. we are importing the num of county and then only take the rows up until that number so if it were 10 it would be 1:10 (this is an EXAMPLE where 10 is num of county). this would be 1:num_of_county so it can be whatever the variable is. 
+  #we want to use mean_value with a dollar sign to extrapolate the area_name from the variable. we are importing the num of county and then only take the rows up until that number so if it were 10 it would be 1:10 (this is an EXAMPLE where 10 is num of county). this would be 1:num_of_county so it can be whatever the variable is.   
     areas_select <- mean_value |>
      
       head(1:num_of_county) |>
