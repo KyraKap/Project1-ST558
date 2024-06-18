@@ -27,9 +27,11 @@ EDU01a <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
 EDU01a
 ```
 
-The data looks good! So now we will select only the columns that we'd like to look at. Using the `select()` function, we can name our data frame, the columns that we want, and we can even use `starts_with` and `ends_with` to help us choose exactly what we want with a little more specificity and ease. We are creating a new object in the process so that we can do further manipulations on just these columns. We're calling the new object `EDU01a_select`.
+------------------------------------------------------------------------
 
-## Pranav, I think we need to change "Area_name" to "area_name" per the instructions in the project doc.Not sure how important this is or why it was listed.
+# #1
+
+The data looks good! So now we will select only the columns that we'd like to look at. Using the `select()` function, we can name our data frame, the columns that we want, and we can even use `starts_with` and `ends_with` to help us choose exactly what we want with a little more specificity and ease. We are creating a new object in the process so that we can do further manipulations on just these columns. We're calling the new object `EDU01a_select`.
 
 ```{r}
 #1 - Select following columns
@@ -38,9 +40,11 @@ EDU01a_select <- EDU01a |>
   rename(area_name = "Area_name")
 
 EDU01a_select
-
-
 ```
+
+------------------------------------------------------------------------
+
+# #2
 
 We know that in this data, the column that ends with a D indicates an enrollment value for that year (with the year being the two digits before the 'D'). Going down, we see all of the enrollment values from that year, in all of the different cities. In order to make this data easier for us to read and understand, we can convert it to long format and rename the columns. What this will do, is turn the columns with this awkward long name ending with D, to simply read '`Enrollment`'. Then all of the years will be listed going down and the corresponding values will appear alongside them. This also means that there will be more than one row/observation for each city. Instead of looking all the way across the row for each city and scanning for the correct year column, we will now have individual rows/observations for city, a year, and the corresponding enrollment value. This will make things easier to process.
 
@@ -59,26 +63,21 @@ EDU01a_long <-
   pivot_longer(EDU01a_select, cols = 3:12,
                names_to = "Enrollment",
                values_to = "values")
-
+EDU01a_long
 ```
 
 Scrolling through, the data looks how we want it to for now.
 
+------------------------------------------------------------------------
+
+# #3
+
 The next step is to make further sense of this long Enrollment string. Two digits of the year are in there so we want to pull that out and make it look better by adding the other digits of the year.
 
-The enrollment variable contains strings that are 10 digits long.
+The enrollment variable contains strings that are 10 digits long, so we are pulling out the year data with the `substr()` function, and the first 7 digits will also be pulled out as a new 'Measurement' variable.
 
 ```{r}
-#Pranav, I'm going to comment this out and mess with it a little bit, because I'm finding this a bit confusing but want to preserve what we had originally...
-
-```
-
-FOR REFERENCE: Instructions for number 3.
-
-Parse the string to pull out the year and convert the year into a numeric value such as 1997 or 2002. Grab the first three characters and following four digits to create a new variable representing which measurement was grabbed. – Hint: Check out the substr() function from base R
-
-```{r}
-#3 Corrected version
+#3 create new variable for the 2 year digits called 'incomplete year' and then convert it to numeric so that we will be able to add 1900 to it, so it will be in date format. 
 
 EDU01a_new <- EDU01a_long |>
       mutate(
@@ -88,42 +87,115 @@ EDU01a_new <- EDU01a_long |>
       select(-Enrollment, -IncompleteYear)
 
 EDU01a_new
+```
 
+------------------------------------------------------------------------
+
+# #4
+
+The data contains both county and non-county data, so we are going to separate them. We will do that by using ", \\w\\w" to look for the character string that is in the format of the state acronym. The acronym TELLS us that it is county data (because the states don't have that). The grep() function finds patterns that match the given pattern.
+
+We are creating an object called 'countystuff' and this will be a list of integers that match the row numbers of the county data.
+
+```{r}
+#4
+
+# Create two data sets, one for non-county and one for county level
+
+countystuff <- grep(pattern = ", \\w\\w", EDU01a_new$area_name)
+```
+
+Let's test it to see if pulling out the acronym worked!
+
+```{r}
+# looking at the output and structure of countystuff
+countystuff
+str(countystuff)
+```
+
+Now, we can use the list we just created to indicate which rows we want in a brand new tibble called EDU01a_county. In this case, we want the 'countystuff' rows and all of the columns associated with them.
+
+```{r}
+EDU01a_county <- EDU01a_new[countystuff, ]
+EDU01a_county
+```
+
+This looks great! By using the **negative sign**, we can now create a tibble for state data with the county rows REMOVED. This will just leave the non-county (or state) rows and all the columns.
+
+```{r}
+EDU01a_state <- EDU01a_new[-countystuff, ]
+EDU01a_state
+```
+
+Here are the class attributes of our newly made tibble before we are going to change them.
+
+```{r}
+class(EDU01a_county)
+```
+
+Here, we are adding a class attribute called "county" to the already existing attributes. These are printed in the form of a vector.
+
+```{r}
+class(EDU01a_county) <- c("county", class(EDU01a_county))
 ```
 
 ```{r}
+class(EDU01a_county)
+```
 
+Now, we are creating a new tibble with an additional column for the class type. In the new column, we are calling the first index so 'county' will be printed in the new class column.
 
-
-#4
-
-countystuff <- grep(pattern = ", \\w\\w", EDU01a_new$area_name)
-
-EDU01a_county <- EDU01a_new[countystuff, ]
-
-EDU01a_state <- EDU01a_new[-countystuff, ]
-
-
-class(EDU01a_county) <- c("county", class(EDU01a_county))
-
+```{r}
 EDU01a_county_class <- EDU01a_county |>
   mutate(class_type = class(EDU01a_county)[1])
 
-class(EDU01a_state) <- c("state", class(EDU01a_state))
+EDU01a_county_class
+```
 
+We are going to do the same thing for state/non-county data now.
+
+```{r}
+class(EDU01a_state) <- c("state", class(EDU01a_state))
+```
+
+Creating the state tibble with the new column for class that reads 'state'.
+
+```{r}
 EDU01a_state_class <- EDU01a_state |>
   mutate(class_type = class(EDU01a_state)[1])
+```
 
+Let's take a look at the new tibbles. They look great!
 
-#5
+```{r}
 print(EDU01a_county_class)
 print(EDU01a_state_class)
+```
+
+------------------------------------------------------------------------
+
+# #5
+
+In our County tibble, we want to not only be able to see that the class type is a county, but also see what state the county is in using the state acronym. We are going to use the same substr() function as before to extract the acronym.
+
+The negative one indicates that the 'start' index is the second to last digit, and then we are using the total number of positions in 'area_name' to indicate the 'stop' index. So this would be the last digit. That's how we are getting the last two digits for the acronym.
+
+```{r}
+#5 Creating a new column for the state abbreviation in the county tibble.
 
 EDU01a_county_class_abb <- EDU01a_county_class |>
   mutate(abbrev_state = substr(area_name, nchar(area_name)-1, nchar(area_name)))
 
 print(EDU01a_county_class_abb)
+```
 
+------------------------------------------------------------------------
+
+# #6
+
+Similarly, we want to display the division for the states. In order to do this, we are first creating a vector of all of the divisions as attributes for the state name data points.
+
+```{r}
 #6
 
 state_division <- c("CONNECTICUT" = "New England", 
@@ -178,18 +250,36 @@ state_division <- c("CONNECTICUT" = "New England",
                     "HAWAII" = "Pacific",
                     "OREGON" = "Pacific",
                     "WASHINGTON" = "Pacific")
+```
 
+We have created a vector of named character strings called state_division.
 
+```{r}
+str(state_division)
+```
+
+Here we are using a vectorized function to create our new tibble with the state division. The mutate() function allows us to create a new column, and the ifelse vectorized function is basically saying, in the vector state_division, if the names of the vector elements matches the area_name variable, it will return what is found in that next position in the function... the area_name value that is in the state_division vector.
+
+Finally, the very last position in the function says what will be returned if there IS NOT a match- "Error".
+
+```{r}
 EDU01a_state_class_division <- EDU01a_state_class |>
   mutate(division = ifelse(area_name %in% names(state_division),
                            state_division[area_name],
                            "Error"))  
 
 print(EDU01a_state_class_division)
+```
 
+### Hooray! It is showing the Division in our new column!
 
-#Following steps for second dataset
+### This wraps up our pre-processing steps. Now, we will write functions that combine and repeat these steps so we can quickly and efficiently make these changes with a *new data set.*
 
+------------------------------------------------------------------------
+
+### Function for steps 1 and 2
+
+```{r}
 #function for steps 1 and 2
 
 
@@ -200,19 +290,39 @@ print(EDU01a_state_class_division)
       pivot_longer(cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
      
   }
-  
-  step_3 <- function(data) {
+```
+
+------------------------------------------------------------------------
+
+### Function for step 3
+
+```{r}
+step_3 <- function(data) {
     data |>
       mutate(
         year = as.numeric(substr(measurement_year, nchar(measurement_year) - 3, nchar(measurement_year) - 2)), 
         measurement = substr(measurement_year, 1, nchar(measurement_year) - 4)
       )
   }
-  
-  step_5 <- function(data) {
+
+```
+
+------------------------------------------------------------------------
+
+### Function for step 5
+
+```{step_5 <- function(data) {}
     data |>
       mutate(state = ifelse(grepl(", \\w\\w", area_name), substr(area_name, nchar(area_name) - 1, nchar(area_name)), NA))
   }
+```
+
+------------------------------------------------------------------------
+
+### Function for step 6
+
+```{r}
+# GABBY COMMENT: could just put 'state' instead of state division
   
   step_6 <- function(data, state_division) {
     data |> 
@@ -221,8 +331,14 @@ print(EDU01a_state_class_division)
                         "Error"))  
 
   }
-  
-  create_two_datasets <- function(data) {
+```
+
+------------------------------------------------------------------------
+
+#### Another mega function that takes in the output from step 3 and creates the two tibbles in step 4, calls the above two functions (to perform steps 5 and 6), and returns two final tibbles.
+
+```{r}
+create_two_datasets <- function(data) {
     county_filter <- grep(pattern = ", \\w\\w", data$area_name)
     county_data <- data[county_filter, ]
     non_county_data <- data[-county_filter, ]
@@ -232,8 +348,10 @@ print(EDU01a_state_class_division)
     
     list(county_data = county_data, non_county_data = non_county_data)
   }
-  
-  process_data <- function(data, state_division) {
+```
+
+```{r}
+process_data <- function(data, state_division) {
     long_data <- step_1_2(data)
     
     parsed_data <- step_3(long_data)
@@ -248,6 +366,10 @@ print(EDU01a_state_class_division)
     
     list(county_data = county_data, non_county_data = non_county_data)
   }
+```
+
+```{r}
+# GABBY COMMENT: put the functions together to where you just list the functions and don't need arguments, instead of including all of the steps within each function. Shouldn't have to have all the state division stuff in the wrapper function.
 
 my_wrapper <- function(url, value_col_name = "enrollment") {
   data <- read_csv(url)
@@ -315,6 +437,8 @@ result <- my_wrapper(url)
 
 print(result)
 
+
+
 county_data <- result$county_data
 non_county_data <- result$non_county_data
 
@@ -346,6 +470,7 @@ plot_state <- function(data, var_name = "enrollment") {
 }
 plot_state(non_county_data)
 
+# GABBY COMMENT: Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
 
 plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_county = "top", num_of_county = 5) {
   data_state <- data |>
@@ -357,8 +482,9 @@ plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_
     arrange(if(top_bottom_county == "top") desc(mean_value) 
             else mean_value)
   
-  
+ # GABBY COMMENT: we want to use mean_value with a dollar sign to extrapolate the area_name from the variable. we are importing the num of county and then only take the rows up until that number so if it were 10 it would be 1:10 (this is an EXAMPLE where 10 is num of county). this would be 1:num_of_county so it can be whatever the variable is. 
     areas_select <- mean_value |>
+     
       head(num_of_county) |>
       pull(area_name)
     
@@ -367,12 +493,18 @@ plot_county <- function(data, state = "NC", var_name = "enrollment", top_bottom_
     plot_data <- data_state |>
       filter(area_name %in% areas_select)
     
-    
+ # y = get(var_name)   
     plot <- ggplot(plot_data, aes(x = year, y = mean_value, color = area_name)) + geom_line() + labs(x = "Year", y = var_name, title = "Line Plot")
   
     return(plot)  
 }
   
+
+
+```
+
+```{r}
+# create function for plotting state
 
 
 ```
