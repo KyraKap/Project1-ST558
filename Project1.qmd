@@ -447,6 +447,8 @@ plot_county(wrapper_result$county_data,state = "NC", var_name = "measurement", t
 print(wrapper_result$county_data)
 ```
 
+The next plot function that we have to create is for the state dataset.  Here, the inputs for the function would be the data, and the variable that we want to analyze.
+
 ```{r}
 # create function for plotting state
 print(wrapper_result$non_county_data)
@@ -519,3 +521,5 @@ plot_county(pst01_combined$county_data, state = "NY", var_name = "measurement", 
 
 
 ```
+
+The report should be all done and good to go!
