@@ -521,19 +521,19 @@ Write a generic function for Summarizing
 
 ```{r}
 library(ggplot2)
-plot_state <- function(data, var_name = "enrollment") {
-  filter_data <- data |>
-    filter(division != "ERROR")
-  
-  data_summary <- filter_data |>
-    group_by(Year, division) |>
-    summarize(mean_value = mean(get(var_name), na.rm = TRUE))
-  
-  plot <- ggplot(data_summary, aes(x = Year, y = mean_value, color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
-  
-  return(plot)
+  plot_state <- function(data, var_name = "enrollment") {
+    filter_data <- data |>
+      filter(division != "ERROR")
     
-}
+    data_summary <- filter_data |>
+      group_by(Year, division) |>
+      summarize(mean_value = mean(get(var_name), na.rm = TRUE))
+    
+    plot <- ggplot(data_summary, aes(x = Year, y = mean_value, color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
+    
+    return(plot)
+      
+  }
 plot_state(wrapper_result$non_county_data)
 
 
