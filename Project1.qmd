@@ -501,7 +501,7 @@ Write a generic function for Summarizing
 
 ```{r}
 library(ggplot2)
-  plot_state <- function(data, var_name = "Enrollment") {
+  plot_state <- function(data, var_name = "measurement") {
     filter_data <- data |>
       filter(division != "ERROR")
     
@@ -520,7 +520,7 @@ plot_state(wrapper_result$non_county_data)
 
 # GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
 
-plot_county <- function(data, state2 = "NC", var_name = "Enrollment", top_bottom_county = "top", num_of_county = 5) {
+plot_county <- function(data, state2 = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 5) {
 
   data_state <- data |>
     filter(state == state2)
@@ -538,12 +538,8 @@ plot_county <- function(data, state2 = "NC", var_name = "Enrollment", top_bottom
           arrange(desc(mean_value, FALSE))
       }
 
-  
- # GABBY COMMENT: THIS IS WHY PLOT ISNT WORKING
-  #we want to use mean_value with a dollar sign to extrapolate the area_name from the variable. we are importing the num of county and then only take the rows up until that number so if it were 10 it would be 1:10 (this is an EXAMPLE where 10 is num of county). this would be 1:num_of_county so it can be whatever the variable is.   
     areas_select <- mean_values$area_name[1:num_of_county]
-     
-     # head(1:num_of_county) |> remove this, head() is another form of Print(), first 6 obs
+
     
     plot_data <- data_state |>
       filter(area_name %in% areas_select)
@@ -557,7 +553,7 @@ plot_county <- function(data, state2 = "NC", var_name = "Enrollment", top_bottom
   
 # function()
 
-plot_county(wrapper_result$county_data,state = "NC", var_name = "Enrollment", top_bottom_county = "top", num_of_county = 5)
+plot_county(wrapper_result$county_data,state = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 5)
 
 print(wrapper_result$county_data)
 ```
