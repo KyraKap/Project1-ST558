@@ -485,6 +485,7 @@ wrapper_edu01b <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/
 edu_combined <- combine_data(wrapper_edu01a, wrapper_edu01b)
 
 #Use the plot function on the state data frame
+plot_state(edu_combined$non_county_data)
 
 #Use the plot function on the county data frame
 plot_county(edu_combined$county_data, state = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 20)
@@ -522,4 +523,4 @@ plot_county(pst01_combined$county_data, state = "NY", var_name = "measurement", 
 
 ```
 
-The report should be all done and good to go!
+The report should be all done and good to go!   
