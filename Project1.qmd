@@ -397,33 +397,28 @@ create_two_datasets <- function(data) {
 print(create_two_datasets((step6result)))
 ```
 
-
+Now, it's time to "wrap" all the functions together.  Here, we will call out the wrapper function that we created earlier by setting the input parameters as the url of the raw data, along with the column of interest.
 
 ```{r}
 # WRAPPER FUNCTION SYNTAX
 
 wrapper_function <- function(url, value_col_name = "Enrollment") {
-#   
   result <- read_csv(url) |>
-#   
    step_1_2() |>
-#   
-   step_3() |>
-#   
-   step_5() |>
-#   
-   step_6() |>
-  
-#   
-   create_two_datasets()
-#   
-   #process_data()
+    step_3() |>
+    step_5() |>
+    step_6() |>
+    create_two_datasets()
  }
 
 
 wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
 wrapper_result <- print(wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment"))
+```
 
+After utilizing the wrapper function, we need to combine the data together as discussed in the homework assignment by creating an additional function that allows the data to be combined.
+
+```{r}
 #We will now combine the data together as discussed in the homework assignment.
 combine_data <- function(result1, result2) {
   combine_county <- bind_rows(result1$county_data, result2$county_data)
@@ -444,74 +439,11 @@ print(combine_result)
 
 # GABBY COMMENT: put the functions together to where you just list the functions and don't need arguments, instead of including all of the steps within each function. Shouldn't have to have all the state division stuff in the wrapper function.
 
-# my_wrapper <- function(url, value_col_name = "enrollment") {
-#   data <- read_csv(url)
-# 
-#   # can this step be made into a function?
-#   state_division <- c("CONNECTICUT" = "New England",
-#                       "MAINE" = "New England",
-#                       "MASSACHUSETTS" = "New England",
-#                       "NEW HAMPSHIRE" = "New England",
-#                       "RHODE ISLAND" = "New England",
-#                       "VERMONT" = "New England",
-#                       "NEW JERSEY" = "Middle Atlantic",
-#                       "NEW YORK" = "Middle Atlantic",
-#                       "PENNSYLVANIA" = "Middle Atlantic",
-#                       "ILLINOIS" = "East North Central",
-#                       "INDIANA" = "East North Central",
-#                       "MICHIGAN" = "East North Central",
-#                       "OHIO" = "East North Central",
-#                       "WISCONSIN" = "East North Central",
-#                       "IOWA" = "West North Central",
-#                       "KANSAS" = "West North Central",
-#                       "MINNESOTA" = "West North Central",
-#                       "MISSOURI" = "West North Central",
-#                       "NEBRASKA" = "West North Central",
-#                       "NORTH DAKOTA" = "West North Central",
-#                       "SOUTH DAKOTA" = "West North Central",
-#                       "DELAWARE" = "South Atlantic",
-#                       "FLORIDA" = "South Atlantic",
-#                       "GEORGIA" = "South Atlantic",
-#                       "MARYLAND" = "South Atlantic",
-#                       "NORTH CAROLINA" = "South Atlantic",
-#                       "SOUTH CAROLINA" = "South Atlantic",
-#                       "VIRGINIA" = "South Atlantic",
-#                       "District of Columbia" = "South Atlantic",
-#                       "DISTRICT OF COLUMBIA" = "South Atlantic",
-#                       "WEST VIRGINIA" = "South Atlantic",
-#                       "ALABAMA" = "East South Central",
-#                       "KENTUCKY" = "East South Central",
-#                       "MISSISSIPPI" = "East South Central",
-#                       "TENNESSEE" = "East South Central",
-#                       "ARKANSAS" = "West South Central",
-#                       "LOUISIANA" = "West South Central",
-#                       "OKLAHOMA" = "West South Central",
-#                       "TEXAS" = "West South Central",
-#                       "ARIZONA" = "Mountain",
-#                       "COLORADO" = "Mountain",
-#                       "IDAHO" = "Mountain",
-#                       "MONTANA" = "Mountain",
-#                       "NEVADA" = "Mountain",
-#                       "NEW MEXICO" = "Mountain",
-#                       "UTAH" = "Mountain",
-#                       "WYOMING" = "Mountain",
-#                       "ALASKA" = "Pacific",
-#                       "CALIFORNIA" = "Pacific",
-#                       "HAWAII" = "Pacific",
-#                       "OREGON" = "Pacific",
-#                       "WASHINGTON" = "Pacific")
-# 
-#   result <- process_data(data, state_division)
-# 
-#   result
-# }
-
-
-
 
 ```
 
-Write a generic function for Summarizing
+
+Now it's time to create some plot functions, yay!  The first plot function we decided to create is the county function.  The inputs for that function are the dataset, the state in question, the column of data that we're looking at, whether we're looking at the top of the county or the bottom of the county, and lastly the number of "top" or "bottom" that will be investigated.
 
 ```{r}
 library(ggplot2)
@@ -549,7 +481,6 @@ plot_county <- function(data, state2 = "NC", var_name = "measurement", top_botto
     return(plot)  
 }
   
-# function()
 
 plot_county(wrapper_result$county_data,state = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 5)
 
