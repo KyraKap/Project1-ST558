@@ -424,6 +424,7 @@ wrapper_function <- function(url, value_col_name = "Enrollment") {
 wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
 wrapper_result <- print(wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment"))
 
+#We will now combine the data together as discussed in the homework assignment.
 combine_data <- function(result1, result2) {
   combine_county <- bind_rows(result1$county_data, result2$county_data)
   combine_non_county <- bind_rows(result1$non_county_data, result2$non_county_data)
@@ -514,22 +515,6 @@ Write a generic function for Summarizing
 
 ```{r}
 library(ggplot2)
-  plot_state <- function(data, var_name = "measurement") {
-    filter_data <- data |>
-      filter(division != "ERROR")
-    
-    data_summary <- filter_data |>
-      group_by(Year, division) |>
-      summarize(mean_value = mean(get(var_name)), .groups = 'drop')
-    
-    plot <- ggplot(data_summary, aes(x = Year, y = get(var_name), color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
-    
-    return(plot)
-      
-  }
-  
-plot_state(wrapper_result$non_county_data, var_name = "measurement")
-
 
 # GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
 
@@ -544,11 +529,11 @@ plot_county <- function(data, state2 = "NC", var_name = "measurement", top_botto
         summarize(mean_value = mean(get(var_name), na.rm = TRUE)) |>
         arrange(desc(mean_value)) 
     }
-      else if(top_bottom_county == "bottom") {
+      else if (top_bottom_county == "bottom") {
         mean_values <- data_state |> 
           group_by(area_name) |>
           summarize(mean_value = mean(get(var_name), na.rm = TRUE)) |>
-          arrange(desc(mean_value, FALSE))
+          arrange(mean_value)
       }
 
     areas_select <- mean_values$area_name[1:num_of_county]
@@ -573,6 +558,70 @@ print(wrapper_result$county_data)
 
 ```{r}
 # create function for plotting state
-  plot_state()
+plot_state <- function(data, var_name = "measurement") {
+    filter_data <- data |>
+      filter(division != "ERROR")
+    
+    data_summary <- filter_data |>
+      group_by(Year, division) |>
+      summarize(mean_value = mean(get(var_name)), .groups = 'drop')
+    
+    plot <- ggplot(data_summary, aes(x = Year, y = get(var_name), color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
+    
+    return(plot)
+      
+  }
+  
+plot_state(wrapper_result$non_county_data, var_name = "measurement")
 
 ```
+
+
+
+And now... for the grand finale.  The End of the Report!
+```{r}
+#Run our data processing function on two enrollment
+wrapper_edu01a <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv", "Enrollment")
+wrapper_edu01b <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment")
+
+
+# Run our data combining function to put these into one object
+edu_combined <- combine_data(wrapper_edu01a, wrapper_edu01b)
+
+#Use the plot function on the state data frame
+
+#Use the plot function on the county data frame
+plot_county(edu_combined$county_data, state = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 20)
+plot_county(edu_combined$county_data, state = "SC", var_name = "measurement", top_bottom_county = "bottom", num_of_county = 7)
+plot_county(edu_combined$county_data)
+plot_county(edu_combined$county_data, state = "PA", var_name = "measurement", top_bottom_county = "top", num_of_county = 8)
+
+
+#Run our data processing function on 4 different sets of data
+wrapper_pst01a <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/PST01a.csv", "Enrollment")
+wrapper_pst01b <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/PST01b.csv", "Enrollment")
+wrapper_pst01c <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/PST01c.csv", "Enrollment")
+wrapper_pst01d <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/PST01d.csv", "Enrollment")
+
+#Run data combining function three times maybe? 
+
+pst01ab_combined <- combine_data(wrapper_pst01a, wrapper_pst01b)
+pst01cd_combined <- combine_data(wrapper_pst01c, wrapper_pst01d)
+pst01_combined <- combine_data(pst01ab_combined, pst01cd_combined)
+
+print(pst01_combined)
+
+
+#Use plot function on state data frame.
+
+#Use plot function on county data frame.
+plot_county(pst01_combined$county_data, state = "CA", var_name = "measurement", top_bottom_county = "top", num_of_county = 15)
+plot_county(pst01_combined$county_data, state = "TX", var_name = "measurement", top_bottom_county = "top", num_of_county = 4)
+plot_county(pst01_combined$county_data)
+plot_county(pst01_combined$county_data, state = "NY", var_name = "measurement", top_bottom_county = "top", num_of_county = 10)
+
+
+
+
+```
+
