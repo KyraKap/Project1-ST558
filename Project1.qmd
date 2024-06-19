@@ -81,12 +81,15 @@ The enrollment variable contains strings that are 10 digits long, so we are pull
 
 EDU01a_new <- EDU01a_long |>
       mutate(
-       IncompleteYear = as.numeric(substr(Enrollment, 8, 9)),
+       IncompleteYear = as.numeric(substr(Enrollment, 7, 9)),
        Measurement = substr(Enrollment, 1, 7), 
-       Year = IncompleteYear + 1900) |>
+       Year = IncompleteYear + 1800) |>
       select(-IncompleteYear)
 
+
+
 EDU01a_new
+
 ```
 
 ------------------------------------------------------------------------
@@ -312,11 +315,11 @@ print(EDU01a_state_class_division)
 #function for steps 1 and 2
 print(EDU01a)
 
-  step_1_2 <- function(data, value_col_name = "enrollment") {
+  step_1_2 <- function(data, value_col_name = "measurement") {
     data |>
       select(Area_name, starts_with("STC"), ends_with("D")) |>
       rename(area_name = Area_name) |>
-      pivot_longer(cols = ends_with("D"), names_to = "measurement_year", values_to = value_col_name)
+      pivot_longer(cols = ends_with("D"), names_to = "Enrollment", values_to = value_col_name)
      
   }
 
@@ -332,10 +335,10 @@ print(step1result)
 step_3 <- function(data) {
   data |>
         mutate(
-       IncompleteYear = as.numeric(substr(measurement_year, 8, 9)),
-       Measurement = substr(enrollment, 1, 7), 
-       Year = IncompleteYear + 1900) |>
-      select(-enrollment, -IncompleteYear)
+       IncompleteYear = as.numeric(substr(Enrollment, 7, 9)),
+       #Measurement = substr(measurement, 1, 7), 
+       Year = IncompleteYear + 1800) |>
+      select(-IncompleteYear)
 }
 step3result <- step_3(step1result)
 print(step3result)
@@ -350,7 +353,10 @@ print(step3result)
 step_5 <- function(data) {
     data |>
       mutate(state = ifelse(grepl(", \\w\\w", area_name), substr(area_name, nchar(area_name) - 1, nchar(area_name)), NA))
-  }
+}
+
+step5result <- step_5(step3result)
+print(step5result)
 ```
 
 ------------------------------------------------------------------------
@@ -367,6 +373,9 @@ step_5 <- function(data) {
                         "Error"))  
 
   }
+
+step6result <- step_6(step5result)
+print(step6result)
 ```
 
 ------------------------------------------------------------------------
@@ -383,31 +392,17 @@ create_two_datasets <- function(data) {
     class(non_county_data) <- c("state", class(non_county_data))
     
     list(county_data = county_data, non_county_data = non_county_data)
-  }
+}
+
+print(create_two_datasets((step6result)))
 ```
 
-```{r}
-# process_data <- function(data, state_division) {
-#     long_data <- step_1_2(data)
-#     
-#     parsed_data <- step_3(long_data)
-#       
-#     datasets <- create_two_datasets(parsed_data)
-#     county_data <- datasets$county_data
-#     non_county_data <- datasets$non_county_data
-#     
-#     county_data <- step_5(county_data)
-#     
-#     non_county_data <- step_6(non_county_data, state_division)
-#     
-#     list(county_data = county_data, non_county_data = non_county_data)
-#   }
-```
+
 
 ```{r}
 # WRAPPER FUNCTION SYNTAX
 
-wrapper_function <- function(url, value_col_name = "enrollment") {
+wrapper_function <- function(url, value_col_name = "Enrollment") {
 #   
   result <- read_csv(url) |>
 #   
@@ -427,7 +422,7 @@ wrapper_function <- function(url, value_col_name = "enrollment") {
 
 
 wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
-wrapper_result <- print(wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "enrollment"))
+wrapper_result <- print(wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment"))
 
 #create_two_datasets(df1, df2)|>
   #create_two_datasets(df3, df4)
@@ -506,7 +501,7 @@ Write a generic function for Summarizing
 
 ```{r}
 library(ggplot2)
-  plot_state <- function(data, var_name = "enrollment") {
+  plot_state <- function(data, var_name = "Enrollment") {
     filter_data <- data |>
       filter(division != "ERROR")
     
@@ -525,7 +520,7 @@ plot_state(wrapper_result$non_county_data)
 
 # GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
 
-plot_county <- function(data, state2 = "NC", var_name = "enrollment", top_bottom_county = "top", num_of_county = 5) {
+plot_county <- function(data, state2 = "NC", var_name = "Enrollment", top_bottom_county = "top", num_of_county = 5) {
 
   data_state <- data |>
     filter(state == state2)
@@ -562,7 +557,7 @@ plot_county <- function(data, state2 = "NC", var_name = "enrollment", top_bottom
   
 # function()
 
-plot_county(wrapper_result$county_data,state = "NC", var_name = "Measurement", top_bottom_county = "top", num_of_county = 5)
+plot_county(wrapper_result$county_data,state = "NC", var_name = "Enrollment", top_bottom_county = "top", num_of_county = 5)
 
 print(wrapper_result$county_data)
 ```
