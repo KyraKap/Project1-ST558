@@ -199,10 +199,7 @@ print(EDU01a_county_class_abb)
 Similarly, we want to display the division for the states. In order to do this, we are first creating a vector of all of the divisions as attributes for the state name data points.
 
 ```{r}
-
-# we should try to turn this into a function 
-
-#6
+#6 # creating a vector of the divisions
 
 state_division <- c("CONNECTICUT" = "New England", 
                     "MAINE" = "New England",
@@ -256,31 +253,6 @@ state_division <- c("CONNECTICUT" = "New England",
                     "HAWAII" = "Pacific",
                     "OREGON" = "Pacific",
                     "WASHINGTON" = "Pacific")
-```
-
-
-```{r}
-
-# Kyra taking a stab at turning the above into a function...
-
-# division only
-# x <- unname(state_division)
-# 
-# # state only
-# y <- names(state_division)
-# 
-# state_div_function <- function(y, x){
-#   if (y[1:6])
-#     (y, x[1]),
-#   if (y[7:14]
-#       (y, x[7])
-# }
-```
-
-
-```{r}
-# x
-# y
 ```
 
 We have created a vector of named character strings called state_division.
@@ -396,7 +368,7 @@ create_two_datasets <- function(data) {
 print(create_two_datasets((step6result)))
 ```
 
-Now, it's time to "wrap" all the functions together.  Here, we will call out the wrapper function that we created earlier by setting the input parameters as the url of the raw data, along with the column of interest.
+Now, it's time to "wrap" all the functions together. Here, we will call out the wrapper function that we created earlier by setting the input parameters as the url of the raw data, along with the column of interest.
 
 ```{r}
 # WRAPPER FUNCTION SYNTAX
@@ -431,23 +403,13 @@ result2 <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.
 
 combine_result <- combine_data(result1, result2)
 print(combine_result)
-
-# create_two_datasets(df1, df2)|>
-  #create_two_datasets(df3, df4)
   
-
-# GABBY COMMENT: put the functions together to where you just list the functions and don't need arguments, instead of including all of the steps within each function. Shouldn't have to have all the state division stuff in the wrapper function.
-
-
 ```
 
-
-Now it's time to create some plot functions, yay!  The first plot function we decided to create is the county function.  The inputs for that function are the dataset, the state in question, the column of data that we're looking at, whether we're looking at the top of the county or the bottom of the county, and lastly the number of "top" or "bottom" that will be investigated.
+Now it's time to create some plot functions, yay! The first plot function we decided to create is the county function. The inputs for that function are the dataset, the state in question, the column of data that we're looking at, whether we're looking at the top of the county or the bottom of the county, and lastly the number of "top" or "bottom" that will be investigated.
 
 ```{r}
 library(ggplot2)
-
-# GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
 
 plot_county <- function(data, state2 = "NC", var_name = "measurement", top_bottom_county = "top", num_of_county = 5) {
 
@@ -473,7 +435,6 @@ plot_county <- function(data, state2 = "NC", var_name = "measurement", top_botto
     plot_data <- data_state |>
       filter(area_name %in% areas_select)
     
- # GABBY COMMENT: y = get(var_name)
     
     plot <- ggplot(plot_data, aes(x = Year, y = get(var_name), color = area_name)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
   
@@ -491,7 +452,7 @@ print(wrapper_result$county_data)
 print(wrapper_result$non_county_data)
 plot_state <- function(data, var_name = "measurement") {
     filter_data <- data |>
-      filter(division != "ERROR")
+      filter(division != "Error")
     
     data_summary <- filter_data |>
       group_by(division, Year) |>
@@ -510,9 +471,8 @@ str(wrapper_result$non_county_data)
 
 ```
 
+And now... for the grand finale. The End of the Report!
 
-
-And now... for the grand finale.  The End of the Report!
 ```{r}
 #Run our data processing function on two enrollment
 wrapper_edu01a <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv", "Enrollment")
@@ -559,4 +519,3 @@ plot_county(pst01_combined$county_data, state = "NY", var_name = "measurement", 
 
 
 ```
-
