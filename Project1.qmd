@@ -112,7 +112,6 @@ Let's test it to see if pulling out the acronym worked!
 
 ```{r}
 # looking at the output and structure of countystuff
-print(countystuff)
 str(countystuff)
 ```
 
