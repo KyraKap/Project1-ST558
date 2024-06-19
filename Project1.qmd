@@ -424,7 +424,20 @@ wrapper_function <- function(url, value_col_name = "Enrollment") {
 wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
 wrapper_result <- print(wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment"))
 
-#create_two_datasets(df1, df2)|>
+combine_data <- function(result1, result2) {
+  combine_county <- bind_rows(result1$county_data, result2$county_data)
+  combine_non_county <- bind_rows(result1$non_county_data, result2$non_county_data)
+  
+  return(list(county_data = combine_county, non_county_data = combine_non_county))
+}
+  
+result1 <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv", "Enrollment")
+result2 <- wrapper_function("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv", "Enrollment")
+
+combine_result <- combine_data(result1, result2)
+print(combine_result)
+
+# create_two_datasets(df1, df2)|>
   #create_two_datasets(df3, df4)
   
 
@@ -507,7 +520,7 @@ library(ggplot2)
     
     data_summary <- filter_data |>
       group_by(Year, division) |>
-      summarize(mean_value = mean(get(value_col_name)))
+      summarize(mean_value = mean(get(var_name)), .groups = 'drop')
     
     plot <- ggplot(data_summary, aes(x = Year, y = get(var_name), color = division)) + geom_line() + labs(x = "Year", y = "Mean Value", title = "Line Plot")
     
@@ -515,7 +528,7 @@ library(ggplot2)
       
   }
   
-plot_state(wrapper_result$non_county_data)
+plot_state(wrapper_result$non_county_data, var_name = "measurement")
 
 
 # GABBY COMMENT (no need to make changes, just general comment): Initializing, defining the default. would only need 'data' argument. if it was a different state, then would need to put the state you want, NC has been initialized as the default. 
